@@ -1,0 +1,56 @@
+@import url("https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css");
+
+/* 🔖 root */
+:root {
+  /* color */
+  --main-background: #fff;
+
+  --main-color: #21bf48;
+  --sub-color: #c4c4c4;
+
+  --main-txt-color: #000;
+  --sub-txt-color: #767676;
+  --point-txt-color: #eb5757;
+  --btn-txt-color: #fff;
+
+  --line-color: #c4c4c4;
+  --sns-btn-color: #767676;
+
+  /* font */
+  --font-tit-size: 3.6rem;
+  --font-regular-size: 1.8rem;
+  --font-middle-size: 1.6rem;
+  --font-small-size: 1.2rem;
+  --font-xsmall-size: 1.4rem;
+
+  /* etc. */
+  --btn-padding: 1.9rem 0;
+  --btn-radius: 5px;
+}
+
+/* 🔖 스크린 리더 */
+
+.sr-only {
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  white-space: nowrap;
+  clip: rect(0, 0, 0, 0);
+  clip-path: polygon(0 0, 0 0, 0 0);
+}
+
+/* 🔖 기본 설정값 */
+
+html {
+  font-size: 10px;
+}
+
+body {
+  color: var(--main-txt-color);
+  font-family: "Spoqa Han Sans Neo", sans-serif;
+  font-weight: 400;
+  line-height: 100%;
+  box-sizing: border-box;
+}
