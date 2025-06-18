@@ -25,7 +25,7 @@
 
   /* etc. */
   --btn-padding: 1.9rem 0;
-  --btn-radius: 5px;
+  --btn-radius: 0.5rem;
 }
 
 /* 🔖 스크린 리더 */
@@ -82,7 +82,7 @@ body {
   width: 20%;
   height: 100%;
   color: #666;
-  font-size: 24px;
+  font-size: 2.4rem;
 }
 
 .slider-nav {
@@ -142,9 +142,9 @@ body {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 380px);
-  gap: 78px 70px;
-  max-width: calc(380px * 3 + 70px * 2);
+  grid-template-columns: repeat(auto-fill, 38rem);
+  gap: 7.8rem 7rem;
+  max-width: calc(38rem * 3 + 7rem * 2);
   margin: 0 auto;
 }
 
