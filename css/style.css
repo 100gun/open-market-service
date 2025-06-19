@@ -249,3 +249,65 @@ body {
   color: var(--sub-txt-color);
   font-size: var(--font-regular-size);
 }
+
+/* // 🔖product 끝 */
+
+.error-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+
+  text-align: center;
+}
+
+.error-img img {
+  width: 27.6rem;
+  height: auto;
+  max-width: 100%;
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  margin-left: 5rem;
+  max-width: 50rem;
+
+  text-align: left;
+}
+
+.error-header {
+  margin-bottom: 4rem;
+}
+
+.error-title {
+  margin-bottom: 2rem;
+
+  font-size: 3.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.error-desc {
+  color: var(--sub-txt-color);
+  font-size: 1.6rem;
+  line-height: 2rem;
+}
+
+/* 액션 버튼 영역 */
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-errorpage {
+  min-width: 20rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* // 🔖404 error 끝 */
