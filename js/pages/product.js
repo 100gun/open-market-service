@@ -1,3 +1,5 @@
+import { API_ENDPOINTS } from "../config.js";
+
 // 슬라이더 기능
 let currentSlide = 0;
 const totalSlides = 5;
@@ -52,11 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // API에서 상품 데이터를 가져오는 함수
 async function fetchProducts() {
   try {
-    const response = await fetch(
-      "https://api.wenivops.co.kr/services/open-market/products/"
-    );
-
+    const response = await fetch(API_ENDPOINTS.PRODUCTS);
     const data = await response.json();
+
     if (data.results && data.results.length > 0) {
       renderProducts(data.results);
     } else {
