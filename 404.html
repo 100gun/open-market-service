@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>페이지를 찾을 수 없습니다 - 404 Error</title>
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/404.js" defer></script>
+  </head>
+  <body>
+    <main class="error-page">
+      <figure class="error-img">
+        <img src="./images/icon-404.png" alt="404 에러를 나타내는 모니터" />
+      </figure>
+
+      <section class="error-content">
+        <header class="error-header">
+          <h1 class="error-title">페이지를 찾을 수 없습니다.</h1>
+          <p class="error-desc">
+            페이지가 존재하지 않거나 사용할 수 없는 페이지입니다.<br />
+            웹 주소가 올바른지 확인해 주세요.
+          </p>
+        </header>
+
+        <nav class="error-actions" aria-label="페이지 이동 옵션">
+          <a href="./product.html" class="btn btn-primary btn-errorpage"
+            >메인으로</a
+          >
+          <button
+            type="button"
+            class="btn btn-secondary btn-errorpage"
+            onclick="history.back()"
+          >
+            이전 페이지
+          </button>
+        </nav>
+      </section>
+    </main>
+  </body>
+</html>
