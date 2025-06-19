@@ -55,7 +55,43 @@ body {
   box-sizing: border-box;
 }
 
-/* 🔖 index.html > product */
+/* 버튼 공통 스타일 */
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 1.9rem 0;
+  border: none;
+  border-radius: var(--btn-radius);
+
+  font-size: 1.8rem;
+  font-weight: 500;
+  text-decoration: none;
+
+  white-space: nowrap;
+}
+
+.btn-primary {
+  color: white;
+  background-color: var(--main-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--main-color);
+}
+
+.btn-secondary {
+  color: var(--sub-txt-color);
+  border: 1px solid var(--line-color);
+}
+
+.btn-secondary:hover {
+  color: #4b5563;
+  background-color: #e5e7eb;
+}
+
+/* // 🔖 기본 설정값 끝 */
 
 .hero-slider {
   position: relative;
