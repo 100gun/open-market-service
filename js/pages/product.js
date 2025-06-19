@@ -35,6 +35,20 @@ setInterval(() => {
   moveSlide(1);
 }, 5000);
 
+// 슬라이드 버튼
+document.addEventListener("DOMContentLoaded", () => {
+  const prevBtn = document.querySelector(".slider-nav.prev");
+  const nextBtn = document.querySelector(".slider-nav.next");
+  const indicators = document.querySelectorAll(".indicator");
+
+  prevBtn.addEventListener("click", () => moveSlide(-1));
+  nextBtn.addEventListener("click", () => moveSlide(1));
+
+  indicators.forEach((btn, index) => {
+    btn.addEventListener("click", () => goToSlide(index));
+  });
+});
+
 // API에서 상품 데이터를 가져오는 함수
 async function fetchProducts() {
   try {
