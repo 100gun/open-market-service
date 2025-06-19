@@ -68,50 +68,65 @@ async function fetchProducts() {
   }
 }
 
+// 📦 DOM API
 function renderProducts(products) {
   const productsGrid = document.getElementById("productsGrid");
 
   const loadingState = document.getElementById("loadingState");
-
-  if (loadingState) {
-    loadingState.remove();
-  }
+  if (loadingState) loadingState.remove();
 
   const reversedProducts = [...products].reverse();
+
   reversedProducts.forEach((product) => {
     const productItem = document.createElement("li");
 
-    // 판매자 이름
-    const sellerName =
+    const productCard = document.createElement("article");
+    productCard.className = "product-card";
+
+    const productLink = document.createElement("a");
+    productLink.href = `/product/${product.id}`;
+    productLink.className = "product-link";
+    productLink.setAttribute("aria-label", `${product.name} 상품 상세보기`);
+
+    const productImg = document.createElement("img");
+    productImg.src = product.image;
+    productImg.alt = product.name;
+    productImg.className = "product-image";
+    productImg.loading = "lazy";
+    productImg.onerror = function () {
+      this.src =
+        "https://via.placeholder.com/280x220/f0f0f0/999?text=이미지+없음";
+    };
+
+    const productInfo = document.createElement("div");
+    productInfo.className = "product-info";
+
+    const sellerName = document.createElement("p");
+    sellerName.className = "seller-name";
+    sellerName.textContent =
       product.seller.store_name ||
       product.seller.name ||
       product.seller.username;
 
-    // 상품 카드 HTML
-    productItem.innerHTML = `
-                    <article class="product-card">
-                        <a href="/product/${
-                          product.id
-                        }" class="product-link" aria-label="${
-      product.name
-    } 상품 상세보기">
-                            <img
-                                src="${product.image}"
-                                alt="${product.name}"
-                                class="product-image"
-                                loading="lazy"
-                                onerror="this.src='https://via.placeholder.com/280x220/f0f0f0/999?text=이미지+없음'"
-                            >
-                            <div class="product-info">
-                                <p class="seller-name">${sellerName}</p>
-                                <h3 class="product-name">${product.name}</h3>
-                                <p class="product-price">
-                                    ${product.price.toLocaleString()}<span class="price-won">원</span>
-                                </p>
-                            </div>
-                        </a>
-                    </article>
-                `;
+    const productName = document.createElement("h3");
+    productName.className = "product-name";
+    productName.textContent = product.name;
+
+    const productPrice = document.createElement("p");
+    productPrice.className = "product-price";
+    productPrice.innerHTML = `
+      ${product.price.toLocaleString()}
+      <span class="price-won">원</span>
+    `;
+    productInfo.appendChild(sellerName);
+    productInfo.appendChild(productName);
+    productInfo.appendChild(productPrice);
+
+    productLink.appendChild(productImg);
+    productLink.appendChild(productInfo);
+    productCard.appendChild(productLink);
+
+    productItem.appendChild(productCard);
     productsGrid.appendChild(productItem);
   });
 
