@@ -84,7 +84,7 @@ function renderProducts(products) {
     productCard.className = "product-card";
 
     const productLink = document.createElement("a");
-    productLink.href = `/productDetail.html?id=${product.id}`;
+    productLink.href = `productDetail.html?id=${product.id}`;
     productLink.className = "product-link";
     productLink.setAttribute("aria-label", `${product.name} 상품 상세보기`);
 
