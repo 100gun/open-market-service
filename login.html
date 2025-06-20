@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>login</title>
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/layout.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script type="module" src="./js/pages/login.js" defer></script>
+  </head>
+  <body class="login-page">
+    <header>
+      <a href="./index.html">
+        <img class="login-logo" src="./images/Logo-hodu.png" alt="HODU" />
+      </a>
+    </header>
+    <!-- // 헤더 영역 끝 -->
+    <main class="login-wrap">
+      <section class="login-card">
+        <h2 class="sr-only">구매회원, 판매회원 로그인 영역</h2>
+        <nav class="tab-container" role="tablist">
+          <button
+            type="button"
+            class="tab-button active"
+            id="buyerTab"
+            role="tab"
+            aria-selected="true"
+            aria-controls="loginForm"
+          >
+            구매회원 로그인
+          </button>
+          <button
+            type="button"
+            class="tab-button"
+            id="sellerTab"
+            role="tab"
+            aria-selected="false"
+            aria-controls="loginForm"
+          >
+            판매회원 로그인
+          </button>
+        </nav>
+
+        <form class="login-form" id="loginForm" novalidate>
+          <fieldset class="input-group">
+            <legend class="sr-only">사용자 인증 정보</legend>
+            <input
+              type="text"
+              id="userId"
+              name="userId"
+              class="input-field"
+              placeholder="아이디"
+              autocomplete="username"
+              aria-describedby="errorMessage"
+            />
+          </fieldset>
+
+          <fieldset class="input-group">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="input-field"
+              placeholder="비밀번호"
+              autocomplete="current-password"
+              aria-describedby="errorMessage"
+            />
+
+            <p
+              class="error-message"
+              id="errorMessage"
+              role="alert"
+              aria-live="polite"
+            ></p>
+          </fieldset>
+
+          <button type="submit" class="btn btn-primary login-btn">
+            로그인
+          </button>
+        </form>
+      </section>
+
+      <nav class="login-links">
+        <a href="./signup.html" aria-label="회원가입 페이지로 이동">회원가입</a>
+        <span class="divider" aria-hidden="true">|</span>
+        <a href="#" aria-label="비밀번호 찾기 페이지로 이동">비밀번호 찾기</a>
+      </nav>
+    </main>
+    <!-- // 메인 영역 끝 -->
+  </body>
+</html>

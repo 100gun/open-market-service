@@ -563,3 +563,168 @@ body {
   display: block;
 }
 /* // 🔖productDetail 끝 */
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.login-logo {
+  margin-bottom: 7rem;
+  width: 23.8rem;
+}
+
+.login-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 55rem;
+}
+
+.login-card {
+  width: 100%;
+  background: white;
+  overflow: hidden;
+}
+
+.tab-container {
+  display: flex;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 2rem 0;
+
+  color: var(--sns-btn-color);
+  background: #f2f2f2;
+  border: 0.1rem solid var(--line-color);
+  border-radius: 1rem 1rem 0 0;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.tab-button.active {
+  position: relative;
+  z-index: 1;
+  color: #000000;
+  background: white;
+  border: 0.1rem solid var(--line-color);
+  border-bottom: 0.1rem solid white;
+}
+
+.tab-button:last-child {
+  border-radius: 1rem 1rem 0 0;
+}
+
+.login-form {
+  margin-top: -1rem;
+  padding: 3.5rem 3.5rem 3rem 3.5rem;
+  background: white;
+  border: 0.1rem solid var(--line-color);
+  border-radius: 1rem;
+}
+
+.input-group {
+  margin-bottom: 0;
+  padding: 0;
+  border: none;
+}
+
+.input-field {
+  width: 100%;
+  margin-bottom: 0.1rem;
+  padding: 2rem 0 2rem 0;
+
+  color: #000000;
+  background: transparent;
+  border: none;
+  border-bottom: 0.1rem solid #c4c4c4;
+  box-sizing: border-box;
+  font-size: 1.6rem;
+}
+
+.input-field::placeholder {
+  color: var(--sub-txt-color);
+  font-weight: 400;
+}
+
+.input-field:focus {
+  margin-bottom: 0;
+  outline: none;
+  border-bottom: 0.2rem solid var(--main-color);
+}
+
+/* 에러 메시지 스타일 - 비밀번호 입력창 바로 아래 */
+.error-message {
+  display: none;
+  margin-top: 1.6rem;
+  margin-bottom: 0;
+
+  color: var(--point-txt-color);
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.error-message.show {
+  display: block;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 3.6rem;
+}
+
+/* 로그인 버튼 로딩 상태 (API 호출 중) */
+.login-btn:disabled {
+  background-color: var(--sub-color);
+  cursor: not-allowed;
+}
+
+.login-links {
+  margin-top: 3rem;
+  padding-bottom: 3.5rem;
+  text-align: center;
+}
+
+.login-links a {
+  color: var(--sub-txt-color);
+  font-size: 1.6rem;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.login-links a:hover {
+  color: var(--main-color);
+}
+
+/* 구분자 스타일 */
+.login-links .divider {
+  margin: 0 1.4rem;
+  color: var(--line-color);
+  font-weight: 400;
+}
+/* // 🔖login 끝 */
+
+/* 📌 반응형 디자인 */
+@media (max-width: 768px) {
+  .login-card {
+    max-width: none;
+    margin: 0 1.5rem;
+  }
+
+  .login-logo {
+    margin-bottom: 4rem;
+    font-size: 6rem;
+  }
+
+  .login-form {
+    padding: 2.5rem;
+  }
+}
