@@ -159,7 +159,7 @@ function handleLoginSuccess(data) {
   if (document.referrer && document.referrer !== window.location.href) {
     window.history.back();
   } else {
-    window.location.href = "./index.html";
+    window.location.href = "./product.html";
   }
 }
 
