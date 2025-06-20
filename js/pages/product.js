@@ -89,9 +89,12 @@ function renderProducts(products) {
     productLink.setAttribute("aria-label", `${product.name} 상품 상세보기`);
 
     const productImg = document.createElement("img");
-    productImg.src = product.image;
+    productImg.src =
+      product.image?.replace(/^http:/, "https:") ||
+      "https://via.placeholder.com/280x220/f0f0f0/999?text=이미지+없음"; // ← 이렇게 변경
     productImg.alt = product.name;
     productImg.className = "product-image";
+
     productImg.loading = "lazy";
     productImg.onerror = function () {
       this.src =
