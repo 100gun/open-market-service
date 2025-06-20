@@ -107,7 +107,16 @@ async function performLogin(userId, password) {
       }),
     });
 
-    const data = await response.json();
+    let data = {};
+    try {
+      // 204 또는 응답이 비어있을 수 있으므로 대비
+      if (response.status !== 204) {
+        data = await response.json();
+      }
+    } catch (jsonError) {
+      console.warn("❗ 응답 JSON 파싱 실패:", jsonError);
+      showErrorMessage("응답 데이터 처리 중 오류가 발생했습니다.");
+    }
 
     if (response.ok) {
       handleLoginSuccess(data);
@@ -115,6 +124,7 @@ async function performLogin(userId, password) {
       handleLoginFailure(data);
     }
   } catch (error) {
+    console.error("❌ 로그인 요청 실패:", error);
     showErrorMessage("서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
   } finally {
     loginButton.disabled = false;
