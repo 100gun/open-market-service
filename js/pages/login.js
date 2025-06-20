@@ -151,6 +151,8 @@ function handleLoginSuccess(data) {
   localStorage.setItem("refreshToken", refresh);
   localStorage.setItem("userInfo", JSON.stringify(user));
 
+  updateHeader();
+
   window.dispatchEvent(new CustomEvent("loginSuccess", { detail: user }));
 
   alert(`${user.name}님, 로그인 성공!`);
