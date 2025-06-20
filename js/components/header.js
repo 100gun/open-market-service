@@ -300,8 +300,13 @@ window.handleLogout = handleLogout;
 window.updateHeader = updateHeader;
 window.initializeHeaderEvents = initializeHeaderEvents;
 
-window.addEventListener("loginSuccess", function (e) {
-  console.log("로그인 성공 이벤트 감지:", e.detail);
-  // 즉시 헤더 업데이트
-  updateHeader();
+// 📌 페이지 로드 시 로그인 성공 확인
+document.addEventListener("DOMContentLoaded", function () {
+  if (sessionStorage.getItem("justLoggedIn") === "true") {
+    sessionStorage.removeItem("justLoggedIn");
+
+    setTimeout(() => {
+      updateHeader();
+    }, 100);
+  }
 });
