@@ -389,14 +389,14 @@ body {
   padding-bottom: 2rem;
 
   color: var(--sub-txt-color);
-  border-bottom: 0.1rem solid var(--line-color);
+  border-bottom: 0.2rem solid var(--line-color);
   font-size: var(--font-middle-size);
 }
 
 .detail-quantity-form-wrap {
   margin-bottom: 3.2rem;
 
-  border-bottom: 0.1rem solid var(--line-color);
+  border-bottom: 0.2rem solid var(--line-color);
 }
 
 /* 수량 선택 폼 */
