@@ -264,7 +264,7 @@ export function createHeader() {
   const logoHeading = document.createElement("h1");
 
   const logoLink = document.createElement("a");
-  logoLink.href = "./index.html";
+  logoLink.href = "/";
   logoLink.className = "logo";
   logoLink.setAttribute("aria-label", "HODU 홈페이지로 이동");
 
