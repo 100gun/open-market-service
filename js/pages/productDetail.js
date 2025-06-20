@@ -52,6 +52,7 @@ function renderProductDetail(product) {
     productImage.alt = product.name;
     productImage.onerror = function () {
       this.src = "./images/preparing-img.png";
+      this.alt = "상품 이미지 준비 중";
     };
   }
 
