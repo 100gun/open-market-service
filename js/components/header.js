@@ -154,7 +154,7 @@ function createUserButton() {
     return menuItem;
   } else {
     const loginLink = document.createElement("a");
-    loginLink.href = "login.html";
+    loginLink.href = "./login.html";
     loginLink.className = "menu-item";
     loginLink.setAttribute("aria-label", "로그인 페이지로 이동");
 
