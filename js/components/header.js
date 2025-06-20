@@ -302,5 +302,7 @@ window.initializeHeaderEvents = initializeHeaderEvents;
 
 window.addEventListener("loginSuccess", function (e) {
   console.log("로그인 성공 이벤트 감지:", e.detail);
-  updateHeader();
+  setTimeout(() => {
+    updateHeader();
+  }, 100); // DOM 업데이트 시간 확보
 });
