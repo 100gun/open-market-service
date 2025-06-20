@@ -83,7 +83,7 @@ body {
 
 .btn-secondary {
   color: var(--sub-txt-color);
-  border: 1px solid var(--line-color);
+  border: 0.1rem solid var(--line-color);
 }
 
 .btn-secondary:hover {
@@ -319,7 +319,7 @@ body {
 /* // 🔖404 error 끝 */
 
 .detail-main-content {
-  max-width: 1280px;
+  max-width: 128rem;
   margin: 0 auto;
   padding: 8rem 7rem;
 }
@@ -389,14 +389,14 @@ body {
   padding-bottom: 2rem;
 
   color: var(--sub-txt-color);
-  border-bottom: 1px solid var(--line-color);
+  border-bottom: 0.1rem solid var(--line-color);
   font-size: var(--font-middle-size);
 }
 
 .detail-quantity-form-wrap {
   margin-bottom: 3.2rem;
 
-  border-bottom: 1px solid var(--line-color);
+  border-bottom: 0.1rem solid var(--line-color);
 }
 
 /* 수량 선택 폼 */
@@ -413,7 +413,7 @@ body {
   width: fit-content;
   overflow: hidden;
 
-  border: 1px solid var(--line-color);
+  border: 0.1rem solid var(--line-color);
   border-radius: var(--btn-radius);
 }
 
@@ -443,8 +443,8 @@ body {
   height: 3.8rem;
 
   border: none;
-  border-left: 1px solid var(--line-color);
-  border-right: 1px solid var(--line-color);
+  border-left: 0.1rem solid var(--line-color);
+  border-right: 0.1rem solid var(--line-color);
 
   text-align: center;
   font-size: var(--font-regular-size);
