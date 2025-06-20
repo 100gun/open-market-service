@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>상품 상세정보</title>
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script type="module" src="./js/pages/productDetail.js" defer></script>
+  </head>
+  <body>
+    <div id="header"></div>
+
+    <main class="detail-main-content">
+      <!-- 상품 정보 섹션 -->
+      <section class="detail-info">
+        <h2 class="sr-only">상품 정보</h2>
+        <figure class="detail-image">
+          <img src="./images/preparing-img.png" alt="이미지 준비중입니다." />
+        </figure>
+
+        <article class="detail-purchase">
+          <h2 class="sr-only">상품 구매 정보</h2>
+
+          <header class="detail-top">
+            <p class="detail-store-name">백엔드글로벌</p>
+            <p class="detail-title">딥러닝 개발자 무릎 담요</p>
+            <p class="detail-price">
+              17,500<span class="detail-currency">원</span>
+            </p>
+          </header>
+
+          <p class="detail-shipping-info">택배배송 / 무료배송</p>
+
+          <div class="detail-quantity-form-wrap">
+            <form class="detail-quantity-form">
+              <fieldset class="detail-quantity-selector">
+                <legend class="sr-only">상품 수량 선택</legend>
+                <label for="detail-quantity-input" class="sr-only">수량</label>
+                <button
+                  type="button"
+                  class="detail-quantity-btn minus"
+                  aria-label="수량 감소"
+                >
+                  <img src="images/icon-minus-line.svg" alt="" />
+                </button>
+                <input
+                  class="detail-quantity-btn detail-quantity-num"
+                  type="number"
+                  id="detail-quantity-input"
+                  name="detail-quantity"
+                  value="1"
+                  min="1"
+                  max="999"
+                  readonly
+                />
+                <button
+                  type="button"
+                  class="detail-quantity-btn plus"
+                  aria-label="수량 증가"
+                >
+                  <img src="images/icon-plus-line.svg" alt="" />
+                </button>
+              </fieldset>
+            </form>
+          </div>
+
+          <dl class="detail-total-price">
+            <dt>총 상품 금액</dt>
+            <dd>
+              <span class="detail-total-quantity">
+                총 수량
+                <span class="detail-total-num">1</span>
+                개
+              </span>
+              <span class="detail-total-amount"
+                >17,500
+                <span class="detail-currency">원</span>
+              </span>
+            </dd>
+          </dl>
+
+          <!-- 구매 버튼 -->
+          <nav class="detail-purchase-actions">
+            <button type="button" class="btn btn-primary detail-btn-buy-now">
+              바로 구매
+            </button>
+            <button type="button" class="btn btn-cart detail-btn-add-cart">
+              장바구니
+            </button>
+          </nav>
+        </article>
+      </section>
+      <!-- // 상품 정보, 구매 영역 끝 -->
+
+      <section class="detail-tabs">
+        <h2 class="sr-only">상품 상세 정보</h2>
+
+        <nav class="detail-tab-navigation" role="tablist">
+          <button
+            type="button"
+            class="detail-tab-btn active"
+            role="tab"
+            aria-selected="true"
+            aria-controls="tab-detail"
+            id="detailbtn-detail"
+          >
+            상품 상세
+          </button>
+          <button
+            type="button"
+            class="detail-tab-btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-review"
+            id="detail-btn-review"
+          >
+            리뷰
+          </button>
+          <button
+            type="button"
+            class="detail-tab-btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-qna"
+            id="detail-btn-qna"
+          >
+            Q&A
+          </button>
+          <button
+            type="button"
+            class="detail-tab-btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-return"
+            id="detail-btn-return"
+          >
+            반품/교환정보
+          </button>
+        </nav>
+
+        <div class="detail-tab-content">
+          <section
+            class="detail-tab-panel active"
+            role="tabpanel"
+            aria-labelledby="btn-detail"
+            id="detail-tab-detail"
+          >
+            <h3 class="sr-only">상품 상세 설명</h3>
+            <!-- <div class="detail-content"></div> -->
+          </section>
+
+          <section
+            class="detail-tab-panel"
+            role="tabpanel"
+            aria-labelledby="btn-review"
+            id="detail-tab-review"
+            hidden
+          >
+            <h3 class="sr-only">상품 리뷰</h3>
+            <!-- <div class="detail-review-content"></div> -->
+          </section>
+
+          <section
+            class="detail-tab-panel"
+            role="tabpanel"
+            aria-labelledby="btn-qna"
+            id="detail-tab-qna"
+            hidden
+          >
+            <h3 class="sr-only">상품 문의</h3>
+            <!-- <div class="detail-qna-content"></div> -->
+          </section>
+
+          <section
+            class="detail-tab-panel"
+            role="tabpanel"
+            aria-labelledby="btn-return"
+            id="detail-tab-return"
+            hidden
+          >
+            <h3 class="sr-only">반품 및 교환 정보</h3>
+            <!-- <div class="detail-return-content"></div> -->
+          </section>
+        </div>
+      </section>
+      <!-- // 탭 영역 끝, 중간 주석 처리된 div는 후에 내용 추가. -->
+    </main>
+
+    <div id="footer"></div>
+  </body>
+</html>
