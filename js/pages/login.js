@@ -151,19 +151,16 @@ function handleLoginSuccess(data) {
   localStorage.setItem("refreshToken", refresh);
   localStorage.setItem("userInfo", JSON.stringify(user));
 
-  // 로그인 성공 이벤트 발생
-  window.dispatchEvent(new CustomEvent("loginSuccess", { detail: user }));
+  // 로그인 성공 플래그 설정
+  sessionStorage.setItem("justLoggedIn", "true");
 
   alert(`${user.name}님, 로그인 성공!`);
 
-  // 헤더 업데이트를 위한 시간을 확보한 후 페이지 이동
-  setTimeout(() => {
-    if (document.referrer && document.referrer !== window.location.href) {
-      window.history.back();
-    } else {
-      window.location.href = "./index.html";
-    }
-  }, 200); // 헤더 업데이트 완료를 위한 시간 확보
+  if (document.referrer && document.referrer !== window.location.href) {
+    window.history.back();
+  } else {
+    window.location.href = "./index.html";
+  }
 }
 
 // ===== 유틸리티 함수 =====
