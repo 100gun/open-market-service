@@ -78,11 +78,11 @@ function handleLogout() {
 
     if (
       window.location.pathname === "/" ||
-      window.location.pathname.includes("./product.html")
+      window.location.pathname.includes("./index.html")
     ) {
       window.location.reload();
     } else {
-      window.location.href = "./product.html";
+      window.location.href = "./index.html";
     }
   }
 }
@@ -264,7 +264,7 @@ export function createHeader() {
   const logoHeading = document.createElement("h1");
 
   const logoLink = document.createElement("a");
-  logoLink.href = "../product.html";
+  logoLink.href = "./index.html";
   logoLink.className = "logo";
   logoLink.setAttribute("aria-label", "HODU 홈페이지로 이동");
 
