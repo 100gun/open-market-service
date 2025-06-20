@@ -143,6 +143,8 @@ function handleLoginSuccess(data) {
 
   window.dispatchEvent(new CustomEvent("loginSuccess", { detail: user }));
 
+  updateHeader();
+
   alert(`${user.name}님, 로그인 성공!`);
 
   if (document.referrer && document.referrer !== window.location.href) {
