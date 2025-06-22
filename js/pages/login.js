@@ -1,4 +1,5 @@
 import { API_ENDPOINTS } from "../config.js";
+import { updateHeader } from "../components/header.js";
 
 let currentLoginType = "buyer";
 
