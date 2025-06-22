@@ -712,6 +712,307 @@ body {
 }
 /* // 🔖login 끝 */
 
+.signup-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-height: 100vh;
+  padding: 4rem 2rem;
+  background-color: var(--main-background);
+}
+
+.signup-logo {
+  width: 23.8rem;
+  height: auto;
+  margin: 7rem 0;
+}
+
+.signup-wrap {
+  width: 100%;
+  max-width: 55rem;
+}
+
+.signup-card {
+  background: white;
+  border-radius: 1rem;
+}
+
+.tab-container {
+  display: flex;
+}
+
+.tab-button:first-child {
+  border-right: none;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.tab-button:last-child {
+  border-radius: 1rem 1rem 0 0;
+}
+
+.tab-button.active {
+  position: relative;
+  color: #000000;
+  background: white;
+  border: 0.1rem solid #c4c4c4;
+  border-bottom: 0.1rem solid white;
+  z-index: 1;
+}
+
+.tab-button.active:first-child {
+  border-right: 0.1rem solid #c4c4c4;
+}
+
+.tab-button.active:last-child {
+  border-left: 0.1rem solid #c4c4c4;
+}
+
+.signup-form {
+  margin-top: -1rem;
+  padding: 3.5rem 3.5rem 3rem 3.5rem;
+
+  background: white;
+  border: 0.1rem solid #c4c4c4;
+  border-radius: 1rem;
+}
+
+.signup-fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.signup-fieldset legend {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+
+.signup-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.signup-form-group label {
+  display: block;
+  margin: 1rem 0;
+  color: var(--main-txt-color);
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+
+.signup-form-input {
+  width: 100%;
+  padding: 2rem 1.6rem;
+  color: var(--main-txt-color);
+  border: 0.1rem solid #c4c4c4;
+  border-radius: var(--btn-radius);
+
+  font-size: 1.6rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.signup-form-input:focus {
+  outline: none;
+  border-color: var(--main-color);
+}
+
+.signup-form-input::placeholder {
+  color: var(--sub-txt-color);
+}
+
+.signup-input-with-button {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.signup-input-with-button .signup-form-input {
+  flex: 1;
+}
+
+.signup-duplicate-btn {
+  flex-shrink: 0;
+  padding: 2rem 2.8rem;
+  color: white;
+  background: var(--main-color);
+  border: none;
+  border-radius: var(--btn-radius);
+
+  font-size: 1.6rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.signup-duplicate-btn:hover {
+  opacity: 0.8;
+}
+
+.signup-form-group.signup-group-margin {
+  margin-top: 5rem;
+}
+
+.signup-phone-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.signup-phone-select {
+  flex: 1;
+  min-width: 8rem;
+  padding: 2rem 1.6rem;
+
+  color: var(--main-txt-color);
+  background: white;
+  background-image: url("./images/icon-down-arrow.svg");
+  background-repeat: no-repeat;
+  background-position: right 1.6rem center;
+
+  border: 0.1rem solid #c4c4c4;
+  border-radius: var(--btn-radius);
+
+  font-size: 1.6rem;
+  text-align: center;
+  appearance: none;
+}
+
+.signup-phone-input {
+  flex: 1;
+  padding: 2rem 1.6rem;
+  color: var(--main-txt-color);
+  border: 0.1rem solid #c4c4c4;
+  border-radius: var(--btn-radius);
+
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.signup-phone-input:focus {
+  outline: none;
+  border-color: var(--main-color);
+}
+
+.seller-only-fields {
+  display: none;
+}
+
+.seller-only-fields.show {
+  display: block;
+}
+
+.signup-terms {
+  align-items: flex-start;
+  margin: 3.4rem 4rem 4rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.signup-terms input[type="checkbox"] {
+  margin: 0;
+  margin-top: 0.2rem;
+  transform: scale(1.2);
+}
+
+.signup-terms label {
+  flex: 1;
+  margin: 0;
+  color: var(--main-txt-color);
+  font-size: 1.6rem;
+  line-height: 1.4;
+}
+
+.signup-terms a {
+  color: var(--main-color);
+  text-decoration: underline;
+}
+
+.signup-terms a:hover {
+  opacity: 0.8;
+}
+
+.signup-submit-btn {
+  width: calc(100% - 8rem);
+  margin: 0 4rem 11rem;
+  padding: var(--btn-padding);
+
+  color: white;
+  background-color: var(--line-color);
+  border: none;
+  border-radius: var(--btn-radius);
+
+  font-size: var(--font-regular-size);
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.signup-submit-btn.active {
+  background: var(--main-color);
+  cursor: pointer;
+}
+
+.signup-submit-btn.active:hover {
+  opacity: 0.8;
+}
+
+.signup-help-text {
+  margin-top: 0.8rem;
+  margin-bottom: 0;
+  color: var(--sub-txt-color);
+  font-size: 1.6rem;
+}
+
+.signup-success-msg {
+  padding: 1rem 0 1.2rem 0;
+  color: var(--main-color);
+  font-size: 1.6rem;
+}
+
+.signup-form-group {
+  margin: 1.2rem 0;
+}
+
+.signup-error-msg {
+  padding: 1rem 0 1.2rem 0;
+  color: var(--point-txt-color);
+  font-size: 1.6rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .signup-page {
+    padding: 2rem 1.6rem;
+  }
+
+  .signup-form {
+    padding: 3rem 2rem;
+  }
+
+  .signup-input-with-button {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .signup-duplicate-btn {
+    padding: 1.7rem 2rem;
+  }
+
+  .signup-phone-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+}
+
+.signup-phone-select,
+.signup-phone-input {
+  width: 100%;
+}
+
+/* // 🔖signup 끝 */
+
 /* 📌 반응형 디자인 */
 @media (max-width: 768px) {
   .login-card {
