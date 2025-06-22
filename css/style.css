@@ -867,7 +867,7 @@ body {
 
   color: var(--main-txt-color);
   background: white;
-  background-image: url("./images/icon-down-arrow.svg");
+  background-image: url("../images/icon-down-arrow.svg");
   background-repeat: no-repeat;
   background-position: right 1.6rem center;
 
