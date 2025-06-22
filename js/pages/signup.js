@@ -50,45 +50,81 @@ const apiUtils = {
     }
   },
 
-  // 아이디 중복확인 수정
+  // 아이디 중복확인
   async checkUserIdDuplicate(userId) {
     try {
-      const randomSuffix = Date.now().toString().slice(-6);
+      const timestamp = Date.now();
+      const randomString = Math.random().toString(36).substring(2, 15);
+      const uniqueId = timestamp + randomString;
+
+      const testData = {
+        username: userId,
+        password: "TempPass123!",
+        name: `temp_${uniqueId}`,
+        phone_number: `010${String(
+          Math.floor(Math.random() * 100000000)
+        ).padStart(8, "0")}`,
+        company_registration_number: String(
+          Math.floor(Math.random() * 10000000000)
+        ).padStart(10, "0"),
+        store_name: `temp_store_${uniqueId}`,
+      };
+
+      console.log("중복확인 테스트 데이터:", testData);
 
       const { response, data } = await this.request(
         API_ENDPOINTS.SELLER_SIGNUP,
         {
           method: "POST",
-          body: JSON.stringify({
-            username: userId,
-            password: "testpass123a", // 8자 이상 + 영소문자 + 숫자
-            name: "testuser",
-            phone_number: "010" + randomSuffix + "00", // 11자리
-            company_registration_number: "1" + randomSuffix + "000", // 10자리
-            store_name: "teststore" + randomSuffix,
-          }),
+          body: JSON.stringify(testData),
         }
       );
 
-      if (response.status === 400 && data.username) {
-        if (Array.isArray(data.username)) {
-          const usernameError = data.username[0];
-          if (usernameError.includes("이미 존재합니다")) {
+      console.log("중복확인 API 응답:", response.status, data);
+
+      if (response.status === 400 && data) {
+        if (data.username && Array.isArray(data.username)) {
+          const usernameErrors = data.username;
+
+          const duplicateError = usernameErrors.find(
+            (error) =>
+              error.includes("이미 존재") ||
+              error.includes("already exists") ||
+              error.includes("이미 등록") ||
+              error.toLowerCase().includes("duplicate")
+          );
+
+          if (duplicateError) {
             return {
               isDuplicate: true,
               message: "이미 사용중인 아이디입니다.",
             };
-          } else {
+          }
+
+          const formatError = usernameErrors.find(
+            (error) =>
+              !error.includes("이미 존재") && !error.includes("already exists")
+          );
+
+          if (formatError) {
             return {
               isDuplicate: false,
               isValid: false,
-              message: usernameError,
+              message: formatError,
             };
           }
         }
+
+        console.log("username 에러 없음 - 사용 가능한 아이디");
+        return { isDuplicate: false, isValid: true };
       }
 
-      // 다른 에러가 있어도 username 관련이 아니면 사용 가능으로 간주
+      if (response.status === 200 || response.status === 201) {
+        console.warn("예상치 못한 성공 응답 - 임시 계정이 생성됨");
+        return { isDuplicate: false, isValid: true };
+      }
+
+      console.log("기타 응답 상태:", response.status);
       return { isDuplicate: false, isValid: true };
     } catch (error) {
       console.error("아이디 중복확인 에러:", error);
@@ -427,7 +463,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (currentUserType === "buyer") {
       alert("구매자 회원가입이 완료되었습니다!");
-      window.location.href = "./product.html";
+      window.location.href = "./index.html";
       return;
     }
 
@@ -449,7 +485,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const result = await apiUtils.submitSellerSignup(userData);
       if (result.success) {
         alert("판매자 회원가입이 완료되었습니다!");
-        window.location.href = "./product.html";
+        window.location.href = "./index.html";
       } else {
         if (result.errors) {
           handleApiErrors(result.errors);
