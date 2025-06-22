@@ -308,3 +308,5 @@ document.addEventListener("DOMContentLoaded", function () {
 window.addEventListener("pageshow", function () {
   updateHeader();
 });
+
+export { updateHeader };
