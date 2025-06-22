@@ -1,312 +1,258 @@
-import { icons } from "../icon-library.js";
+import { API_ENDPOINTS } from "../config.js";
+import { updateHeader } from "../components/header.js";
 
-// 📌 로그인 확인
-function isLoggedIn() {
-  try {
-    const token = localStorage.getItem("accessToken");
-    return token !== null && token !== "";
-  } catch (e) {
-    console.warn("localStorage 접근 실패:", e);
-    return false;
-  }
+let currentLoginType = "buyer";
+
+const LOGIN_ENDPOINT = API_ENDPOINTS.LOGIN;
+
+// 📌 페이지 로드가 완료 > 메인 초기화 함수
+document.addEventListener("DOMContentLoaded", function () {
+  initializeLoginPage();
+  checkExistingLogin(); // 기존 로그인 확인을 별도 함수로 분리
+});
+
+function initializeLoginPage() {
+  const buyerTab = document.getElementById("buyerTab");
+  const sellerTab = document.getElementById("sellerTab");
+  const loginForm = document.getElementById("loginForm");
+  const inputFields = document.querySelectorAll(".input-field");
+
+  buyerTab.addEventListener("click", () => switchTab("buyer"));
+  sellerTab.addEventListener("click", () => switchTab("seller"));
+
+  loginForm.addEventListener("submit", handleLogin);
+
+  inputFields.forEach((field) => {
+    field.addEventListener("input", hideErrorMessage);
+  });
 }
 
-// 📌 사용자 정보 호출
-function getUserInfo() {
-  try {
-    const userInfo = localStorage.getItem("userInfo");
-    return userInfo ? JSON.parse(userInfo) : null;
-  } catch (e) {
-    console.warn("localStorage 접근 실패:", e);
-    return null;
-  }
-}
-
-// 📌 헤더 버튼 클릭 이벤트
-function initializeHeaderEvents() {
-  console.log("=== 헤더 이벤트 초기화 시작 ===");
-
-  const mypageButton = document.querySelector("#mypageButton");
-  const userDropdown = document.querySelector("#userDropdown");
-  const menuItem = mypageButton?.closest(".menu-item"); // 부모 menu-item 요소 찾기
-
-  console.log("마이페이지 버튼:", mypageButton);
-  console.log("드롭다운 메뉴:", userDropdown);
-  console.log("메뉴 아이템:", menuItem);
-
-  if (mypageButton && userDropdown && menuItem) {
-    mypageButton.addEventListener("click", function (e) {
-      console.log("🎯 마이페이지 버튼 클릭됨!");
-      e.preventDefault();
-      e.stopPropagation();
-
-      const isActive = menuItem.classList.contains("active");
-
-      if (isActive) {
-        menuItem.classList.remove("active");
-        userDropdown.classList.remove("show");
-        mypageButton.setAttribute("aria-expanded", "false");
-      } else {
-        menuItem.classList.add("active");
-        userDropdown.classList.add("show");
-        mypageButton.setAttribute("aria-expanded", "true");
-      }
-    });
-
-    document.addEventListener("click", function (e) {
-      if (!menuItem.contains(e.target) && !userDropdown.contains(e.target)) {
-        menuItem.classList.remove("active");
-        userDropdown.classList.remove("show");
-        mypageButton.setAttribute("aria-expanded", "false");
-      }
-    });
-
-    userDropdown.addEventListener("click", function (e) {
-      e.stopPropagation();
-    });
-  }
-}
-
-// 📌 로그아웃
-function handleLogout() {
-  if (confirm("로그아웃 하시겠습니까?")) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userInfo");
-
-    updateHeader();
+// 📌 기존 로그인 상태 확인 (분리된 함수)
+function checkExistingLogin() {
+  if (isLoggedIn()) {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     if (
-      window.location.pathname === "/" ||
-      window.location.pathname.includes("./index.html")
+      confirm(
+        `${userInfo.name}님으로 이미 로그인되어 있습니다. 메인 페이지로 이동하시겠습니까?`
+      )
     ) {
-      window.location.reload();
-    } else {
       window.location.href = "./index.html";
     }
   }
 }
 
-// 📌 헤더 업데이트
-function updateHeader() {
-  const headerElement = document.getElementById("header");
+// 📌 탭 관리
+function switchTab(tabType) {
+  const buyerTab = document.getElementById("buyerTab");
+  const sellerTab = document.getElementById("sellerTab");
 
-  if (!headerElement) {
+  if (tabType === "buyer") {
+    buyerTab.classList.add("active");
+    buyerTab.setAttribute("aria-selected", "true");
+    sellerTab.classList.remove("active");
+    sellerTab.setAttribute("aria-selected", "false");
+    currentLoginType = "buyer";
+  } else {
+    sellerTab.classList.add("active");
+    sellerTab.setAttribute("aria-selected", "true");
+    buyerTab.classList.remove("active");
+    buyerTab.setAttribute("aria-selected", "false");
+    currentLoginType = "seller";
+  }
+
+  resetForm();
+}
+
+// 📌 로그인 처리
+function handleLogin(event) {
+  event.preventDefault();
+
+  const userId = document.getElementById("userId").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!validateInputs(userId, password)) {
     return;
   }
 
-  headerElement.innerHTML = "";
-
-  const newHeader = createHeader();
-  headerElement.appendChild(newHeader);
-
-  const WAIT_TIME = 100; // 브라우저 > 새 요소 준비할 시간
-  setTimeout(initializeHeaderEvents, WAIT_TIME);
+  performLogin(userId, password);
 }
 
-// 📌 로그인 상태에 따른 메뉴 변화
-function createUserButton() {
-  const isUserLoggedIn = isLoggedIn();
+// 📌 입력값 검증
+function validateInputs(userId, password) {
+  const userIdField = document.getElementById("userId");
+  const passwordField = document.getElementById("password");
 
-  if (isUserLoggedIn) {
-    const menuItem = document.createElement("div");
-    menuItem.className = "menu-item user-menu-dropdown";
+  if (!userId && !password) {
+    showErrorMessage("아이디와 비밀번호를 입력해주세요.");
+    userIdField.focus();
+    return false;
+  }
 
-    const button = document.createElement("button");
-    button.className = "user-menu-button";
-    button.setAttribute("aria-label", "마이페이지 메뉴 열기");
-    button.id = "mypageButton";
+  if (!userId) {
+    showErrorMessage("아이디를 입력해주세요.");
+    userIdField.focus();
+    return false;
+  }
 
-    const defaultIcon = document.createElement("span");
-    defaultIcon.className = "user-icon icon-default";
-    defaultIcon.innerHTML = icons.user;
+  if (!password) {
+    showErrorMessage("비밀번호를 입력해주세요.");
+    passwordField.focus();
+    return false;
+  }
 
-    const hoverIcon = defaultIcon.cloneNode(true);
-    hoverIcon.className = "user-icon icon-hover";
+  return true;
+}
 
-    const menuText = document.createElement("span");
-    menuText.className = "menu-text";
-    menuText.textContent = "마이페이지";
+// 📌 실제 로그인 처리 함수
+async function performLogin(userId, password) {
+  const loginButton = document.querySelector(".login-btn");
+  const originalButtonText = loginButton.textContent;
 
-    button.appendChild(defaultIcon);
-    button.appendChild(hoverIcon);
-    button.appendChild(menuText);
+  loginButton.disabled = true;
+  loginButton.textContent = "로그인 중...";
 
-    const dropdownMenu = document.createElement("div");
-    dropdownMenu.className = "dropdown-menu";
-    dropdownMenu.id = "userDropdown";
+  try {
+    const response = await fetch(LOGIN_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: userId,
+        password: password,
+      }),
+    });
 
-    const mypageItem = document.createElement("button");
-    mypageItem.className = "dropdown-item";
-    mypageItem.textContent = "마이페이지";
+    let data = {};
+    try {
+      // 204 또는 응답이 비어있을 수 있으므로 대비
+      if (response.status !== 204) {
+        data = await response.json();
+      }
+    } catch (jsonError) {
+      console.warn("❗ 응답 JSON 파싱 실패:", jsonError);
+      showErrorMessage("응답 데이터 처리 중 오류가 발생했습니다.");
+      return;
+    }
 
-    const logoutItem = document.createElement("button");
-    logoutItem.className = "dropdown-item logout-btn";
-    logoutItem.textContent = "로그아웃";
-    logoutItem.addEventListener("click", handleLogout);
-
-    dropdownMenu.appendChild(mypageItem);
-    dropdownMenu.appendChild(logoutItem);
-
-    menuItem.appendChild(button);
-    menuItem.appendChild(dropdownMenu);
-
-    return menuItem;
-  } else {
-    const loginLink = document.createElement("a");
-    loginLink.href = "./login.html";
-    loginLink.className = "menu-item";
-    loginLink.setAttribute("aria-label", "로그인 페이지로 이동");
-
-    const defaultIcon = document.createElement("span");
-    defaultIcon.className = "user-icon icon-default";
-    defaultIcon.innerHTML = icons.user;
-
-    const hoverIcon = defaultIcon.cloneNode(true);
-    hoverIcon.className = "user-icon icon-hover";
-
-    const menuText = document.createElement("span");
-    menuText.className = "menu-text";
-    menuText.textContent = "로그인";
-
-    loginLink.appendChild(defaultIcon);
-    loginLink.appendChild(hoverIcon);
-    loginLink.appendChild(menuText);
-
-    return loginLink;
+    if (response.ok) {
+      handleLoginSuccess(data);
+    } else {
+      handleLoginFailure(data);
+    }
+  } catch (error) {
+    console.error("❌ 로그인 요청 실패:", error);
+    showErrorMessage("서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
+  } finally {
+    loginButton.disabled = false;
+    loginButton.textContent = originalButtonText;
   }
 }
 
-// 📌 검색
-function createSearchSection() {
-  const searchSection = document.createElement("section");
-  searchSection.className = "search-section";
-  searchSection.setAttribute("role", "search");
-  searchSection.setAttribute("aria-label", "상품 검색");
+// 📌 로그인 성공
+function handleLoginSuccess(data) {
+  console.log("로그인 응답 데이터:", data); // 디버깅용
 
-  const searchForm = document.createElement("form");
-  searchForm.className = "search-form";
-  searchForm.action = "#";
-  searchForm.method = "get";
+  // 응답 데이터 구조 확인
+  if (!data || !data.user) {
+    console.error("사용자 정보가 응답에 없습니다:", data);
+    showErrorMessage("로그인 처리 중 오류가 발생했습니다.");
+    return;
+  }
 
-  const searchInput = document.createElement("input");
-  searchInput.type = "search";
-  searchInput.className = "search-input";
-  searchInput.name = "query";
-  searchInput.placeholder = "상품을 검색해보세요!";
-  searchInput.setAttribute("aria-label", "검색어 입력");
-  searchInput.autocomplete = "off";
+  const { access, refresh, user } = data;
+  const expectedUserType = currentLoginType === "buyer" ? "BUYER" : "SELLER";
 
-  const searchButton = document.createElement("button");
-  searchButton.type = "submit";
-  searchButton.className = "search-button";
-  searchButton.setAttribute("aria-label", "검색 실행");
+  if (user.user_type !== expectedUserType) {
+    const wrongTypeMessage =
+      currentLoginType === "buyer"
+        ? "구매회원 계정이 아닙니다. 판매회원 탭에서 로그인해주세요."
+        : "판매회원 계정이 아닙니다. 구매회원 탭에서 로그인해주세요.";
 
-  const searchIcon = document.createElement("img");
-  searchIcon.src = "images/search.png";
-  searchIcon.alt = "";
+    showErrorMessage(wrongTypeMessage);
+    return;
+  }
 
-  searchButton.appendChild(searchIcon);
+  // 토큰과 사용자 정보 저장
+  localStorage.setItem("accessToken", access);
+  localStorage.setItem("refreshToken", refresh);
+  localStorage.setItem("userInfo", JSON.stringify(user));
 
-  searchForm.appendChild(searchInput);
-  searchForm.appendChild(searchButton);
+  // 로그인 성공 플래그 설정
+  sessionStorage.setItem("justLoggedIn", "true");
 
-  searchSection.appendChild(searchForm);
+  alert(`${user.name}님, 로그인 성공!`);
 
-  return searchSection;
-}
-
-function createUserMenu() {
-  const userMenu = document.createElement("nav");
-  userMenu.className = "user-menu";
-  userMenu.setAttribute("role", "navigation");
-  userMenu.setAttribute("aria-label", "사용자 메뉴");
-
-  const cartLink = document.createElement("a");
-  cartLink.href = "#";
-  cartLink.className = "menu-item";
-  cartLink.setAttribute("aria-label", "장바구니 페이지로 이동");
-
-  const cartDefaultIcon = document.createElement("span");
-  cartDefaultIcon.className = "icon-default";
-  cartDefaultIcon.innerHTML = icons.cart;
-
-  const cartHoverIcon = cartDefaultIcon.cloneNode(true);
-  cartHoverIcon.className = "icon-hover";
-
-  const cartText = document.createElement("span");
-  cartText.className = "menu-text";
-  cartText.textContent = "장바구니";
-
-  cartLink.appendChild(cartDefaultIcon);
-  cartLink.appendChild(cartHoverIcon);
-  cartLink.appendChild(cartText);
-
-  const userButton = createUserButton();
-  userMenu.appendChild(cartLink);
-  userMenu.appendChild(userButton);
-
-  return userMenu;
-}
-
-// 📌 전체 헤더 만들기
-export function createHeader() {
-  const header = document.createElement("header");
-  header.className = "header";
-  header.setAttribute("role", "banner");
-
-  const headerContainer = document.createElement("div");
-  headerContainer.className = "header-container";
-
-  const headerWrap = document.createElement("div");
-  headerWrap.className = "header-wrap";
-
-  const logoHeading = document.createElement("h1");
-
-  const logoLink = document.createElement("a");
-  logoLink.href = "/";
-  logoLink.className = "logo";
-  logoLink.setAttribute("aria-label", "HODU 홈페이지로 이동");
-
-  const logoImg = document.createElement("img");
-  logoImg.className = "top-logo";
-  logoImg.src = "images/Logo-hodu.png";
-  logoImg.alt = "HODU";
-
-  logoLink.appendChild(logoImg);
-  logoHeading.appendChild(logoLink);
-
-  const searchSection = createSearchSection();
-
-  headerWrap.appendChild(logoHeading);
-  headerWrap.appendChild(searchSection);
-
-  const userMenu = createUserMenu();
-
-  headerContainer.appendChild(headerWrap);
-  headerContainer.appendChild(userMenu);
-
-  header.appendChild(headerContainer);
-
-  // 브라우저 > 새 요소 준비할 시간
-  setTimeout(() => {
-    initializeHeaderEvents();
-  }, 100);
-
-  return header;
-}
-
-window.handleLogout = handleLogout;
-window.updateHeader = updateHeader;
-window.initializeHeaderEvents = initializeHeaderEvents;
-
-// 📌 헤더 업데이트
-document.addEventListener("DOMContentLoaded", function () {
+  // 헤더 업데이트
   updateHeader();
-});
 
-window.addEventListener("pageshow", function () {
-  updateHeader();
-});
+  // 페이지 이동
+  if (document.referrer && document.referrer !== window.location.href) {
+    window.history.back();
+  } else {
+    window.location.href = "./index.html";
+  }
+}
 
-export { updateHeader };
+// 📌 로그인 실패
+function handleLoginFailure(data) {
+  console.log("로그인 실패 데이터:", data); // 디버깅용
+
+  const errorMessage =
+    data.error || data.message || "아이디 또는 비밀번호가 일치하지 않습니다.";
+
+  showErrorMessage(errorMessage);
+
+  const passwordField = document.getElementById("password");
+  passwordField.value = "";
+  passwordField.focus();
+}
+
+// ===== 유틸리티 함수 =====
+
+function requireLogin(redirectUrl = "./login.html") {
+  if (!isLoggedIn()) {
+    alert("로그인이 필요한 서비스입니다.");
+    window.location.href = redirectUrl;
+    return false;
+  }
+  return true;
+}
+
+// ===== 토큰 관리 함수 =====
+
+function isLoggedIn() {
+  const token = localStorage.getItem("accessToken");
+  return token !== null && token !== "";
+}
+
+// 📌 로그아웃
+function logout() {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userInfo");
+
+  window.location.href = "./login.html";
+}
+
+function showErrorMessage(message) {
+  const errorElement = document.getElementById("errorMessage");
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.classList.add("show");
+  }
+}
+
+function hideErrorMessage() {
+  const errorElement = document.getElementById("errorMessage");
+  if (errorElement) {
+    errorElement.classList.remove("show");
+    errorElement.textContent = "";
+  }
+}
+
+function resetForm() {
+  document.getElementById("loginForm").reset();
+  hideErrorMessage();
+}

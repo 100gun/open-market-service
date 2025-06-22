@@ -155,6 +155,8 @@ function handleLoginSuccess(data) {
   // 로그인 성공 플래그 설정
   sessionStorage.setItem("justLoggedIn", "true");
 
+  alert(`${user.name}님, 로그인 성공!`);
+
   updateHeader();
 
   if (document.referrer && document.referrer !== window.location.href) {
