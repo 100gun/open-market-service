@@ -8,6 +8,7 @@ const LOGIN_ENDPOINT = API_ENDPOINTS.LOGIN;
 // 📌 페이지 로드가 완료 > 메인 초기화 함수
 document.addEventListener("DOMContentLoaded", function () {
   initializeLoginPage();
+  checkExistingLogin(); // 기존 로그인 확인을 별도 함수로 분리
 });
 
 function initializeLoginPage() {
@@ -24,6 +25,21 @@ function initializeLoginPage() {
   inputFields.forEach((field) => {
     field.addEventListener("input", hideErrorMessage);
   });
+}
+
+// 📌 기존 로그인 상태 확인 (분리된 함수)
+function checkExistingLogin() {
+  if (isLoggedIn()) {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (
+      confirm(
+        `${userInfo.name}님으로 이미 로그인되어 있습니다. 메인 페이지로 이동하시겠습니까?`
+      )
+    ) {
+      window.location.href = "./index.html";
+    }
+  }
 }
 
 // 📌 탭 관리
@@ -117,6 +133,7 @@ async function performLogin(userId, password) {
     } catch (jsonError) {
       console.warn("❗ 응답 JSON 파싱 실패:", jsonError);
       showErrorMessage("응답 데이터 처리 중 오류가 발생했습니다.");
+      return;
     }
 
     if (response.ok) {
@@ -135,6 +152,15 @@ async function performLogin(userId, password) {
 
 // 📌 로그인 성공
 function handleLoginSuccess(data) {
+  console.log("로그인 응답 데이터:", data); // 디버깅용
+
+  // 응답 데이터 구조 확인
+  if (!data || !data.user) {
+    console.error("사용자 정보가 응답에 없습니다:", data);
+    showErrorMessage("로그인 처리 중 오류가 발생했습니다.");
+    return;
+  }
+
   const { access, refresh, user } = data;
   const expectedUserType = currentLoginType === "buyer" ? "BUYER" : "SELLER";
 
@@ -148,6 +174,7 @@ function handleLoginSuccess(data) {
     return;
   }
 
+  // 토큰과 사용자 정보 저장
   localStorage.setItem("accessToken", access);
   localStorage.setItem("refreshToken", refresh);
   localStorage.setItem("userInfo", JSON.stringify(user));
@@ -157,13 +184,29 @@ function handleLoginSuccess(data) {
 
   alert(`${user.name}님, 로그인 성공!`);
 
+  // 헤더 업데이트
   updateHeader();
 
+  // 페이지 이동
   if (document.referrer && document.referrer !== window.location.href) {
     window.history.back();
   } else {
     window.location.href = "./index.html";
   }
+}
+
+// 📌 로그인 실패
+function handleLoginFailure(data) {
+  console.log("로그인 실패 데이터:", data); // 디버깅용
+
+  const errorMessage =
+    data.error || data.message || "아이디 또는 비밀번호가 일치하지 않습니다.";
+
+  showErrorMessage(errorMessage);
+
+  const passwordField = document.getElementById("password");
+  passwordField.value = "";
+  passwordField.focus();
 }
 
 // ===== 유틸리티 함수 =====
@@ -175,17 +218,6 @@ function requireLogin(redirectUrl = "./login.html") {
     return false;
   }
   return true;
-}
-
-function handleLoginFailure(data) {
-  const errorMessage =
-    data.error || "아이디 또는 비밀번호가 일치하지 않습니다.";
-
-  showErrorMessage(errorMessage);
-
-  const passwordField = document.getElementById("password");
-  passwordField.value = "";
-  passwordField.focus();
 }
 
 // ===== 토큰 관리 함수 =====
@@ -206,32 +238,21 @@ function logout() {
 
 function showErrorMessage(message) {
   const errorElement = document.getElementById("errorMessage");
-  errorElement.textContent = message;
-  errorElement.classList.add("show");
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.classList.add("show");
+  }
 }
 
 function hideErrorMessage() {
   const errorElement = document.getElementById("errorMessage");
-  errorElement.classList.remove("show");
-  errorElement.textContent = "";
+  if (errorElement) {
+    errorElement.classList.remove("show");
+    errorElement.textContent = "";
+  }
 }
 
 function resetForm() {
   document.getElementById("loginForm").reset();
   hideErrorMessage();
 }
-
-// ===== 페이지 로드 시 로그인 상태 확인 =====
-document.addEventListener("DOMContentLoaded", function () {
-  if (isLoggedIn()) {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-    if (
-      confirm(
-        `${userInfo.name}님으로 이미 로그인되어 있습니다. 메인 페이지로 이동하시겠습니까?`
-      )
-    ) {
-      window.location.href = "./index.html";
-    }
-  }
-});
