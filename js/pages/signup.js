@@ -13,10 +13,10 @@ const apiUtils = {
     const config = { ...defaultOptions, ...options };
 
     try {
-      console.log("API 요청:", url, config); // 디버깅용
+      console.log("API 요청:", url, config);
       const response = await fetch(url, config);
       const data = await response.json();
-      console.log("API 응답:", response.status, data); // 디버깅용
+      console.log("API 응답:", response.status, data);
       return { response, data };
     } catch (error) {
       console.error("API 요청 실패:", error);
@@ -50,35 +50,48 @@ const apiUtils = {
     }
   },
 
-  // 아이디 중복확인
-  async checkUserIdDuplicate(userId) {
+  // 아이디 중복확인 - 구매자용과 판매자용 분리
+  async checkUserIdDuplicate(userId, userType = "seller") {
     try {
       const timestamp = Date.now();
       const randomString = Math.random().toString(36).substring(2, 15);
       const uniqueId = timestamp + randomString;
 
-      const testData = {
-        username: userId,
-        password: "TempPass123!",
-        name: `temp_${uniqueId}`,
-        phone_number: `010${String(
-          Math.floor(Math.random() * 100000000)
-        ).padStart(8, "0")}`,
-        company_registration_number: String(
-          Math.floor(Math.random() * 10000000000)
-        ).padStart(10, "0"),
-        store_name: `temp_store_${uniqueId}`,
-      };
+      let testData;
+      let endpoint;
+
+      if (userType === "buyer") {
+        testData = {
+          username: userId,
+          password: "TempPass123a",
+          name: `temp_${uniqueId}`,
+          phone_number: `010${String(
+            Math.floor(Math.random() * 100000000)
+          ).padStart(8, "0")}`,
+        };
+        endpoint = API_ENDPOINTS.BUYER_SIGNUP;
+      } else {
+        testData = {
+          username: userId,
+          password: "TempPass123a",
+          name: `temp_${uniqueId}`,
+          phone_number: `010${String(
+            Math.floor(Math.random() * 100000000)
+          ).padStart(8, "0")}`,
+          company_registration_number: String(
+            Math.floor(Math.random() * 10000000000)
+          ).padStart(10, "0"),
+          store_name: `temp_store_${uniqueId}`,
+        };
+        endpoint = API_ENDPOINTS.SELLER_SIGNUP;
+      }
 
       console.log("중복확인 테스트 데이터:", testData);
 
-      const { response, data } = await this.request(
-        API_ENDPOINTS.SELLER_SIGNUP,
-        {
-          method: "POST",
-          body: JSON.stringify(testData),
-        }
-      );
+      const { response, data } = await this.request(endpoint, {
+        method: "POST",
+        body: JSON.stringify(testData),
+      });
 
       console.log("중복확인 API 응답:", response.status, data);
 
@@ -136,10 +149,44 @@ const apiUtils = {
     }
   },
 
-  // 판매자 회원가입 수정
+  // 구매자 회원가입
+  async submitBuyerSignup(userData) {
+    try {
+      console.log("구매자 회원가입 데이터 검증:");
+      console.log("- username:", userData.username);
+      console.log("- password 길이:", userData.password.length);
+      console.log("- password 영소문자:", /[a-z]/.test(userData.password));
+      console.log("- password 숫자:", /\d/.test(userData.password));
+      console.log("- phone_number 길이:", userData.phone_number.length);
+      console.log(
+        "- phone_number 형식:",
+        /^010\d{8}$/.test(userData.phone_number)
+      );
+
+      const { response, data } = await this.request(
+        API_ENDPOINTS.BUYER_SIGNUP,
+        {
+          method: "POST",
+          body: JSON.stringify(userData),
+        }
+      );
+
+      if (response.ok) {
+        return { success: true, data };
+      } else {
+        console.error("구매자 회원가입 실패:", data);
+        return { success: false, errors: data };
+      }
+    } catch (error) {
+      console.error("구매자 회원가입 API 에러:", error);
+      return { success: false, error: "서버 연결에 실패했습니다." };
+    }
+  },
+
+  // 판매자 회원가입
   async submitSellerSignup(userData) {
     try {
-      console.log("회원가입 데이터 검증:");
+      console.log("판매자 회원가입 데이터 검증:");
       console.log("- username:", userData.username);
       console.log("- password 길이:", userData.password.length);
       console.log("- password 영소문자:", /[a-z]/.test(userData.password));
@@ -165,11 +212,11 @@ const apiUtils = {
       if (response.ok) {
         return { success: true, data };
       } else {
-        console.error("회원가입 실패:", data);
+        console.error("판매자 회원가입 실패:", data);
         return { success: false, errors: data };
       }
     } catch (error) {
-      console.error("회원가입 API 에러:", error);
+      console.error("판매자 회원가입 API 에러:", error);
       return { success: false, error: "서버 연결에 실패했습니다." };
     }
   },
@@ -241,6 +288,13 @@ document.addEventListener("DOMContentLoaded", function () {
       sellerFields.style.display = "block";
       currentUserType = "seller";
     }
+
+    // 탭 전환 시 아이디 확인 상태 초기화
+    isUserIdChecked = false;
+    isUserIdValid = false;
+    userIdSuccess.style.display = "none";
+    hideError(userIdInput);
+
     validateForm();
   }
 
@@ -389,7 +443,10 @@ document.addEventListener("DOMContentLoaded", function () {
     duplicateBtn.disabled = true;
 
     try {
-      const result = await apiUtils.checkUserIdDuplicate(userId);
+      const result = await apiUtils.checkUserIdDuplicate(
+        userId,
+        currentUserType
+      );
       if (result.isDuplicate) {
         showError(userIdInput, result.message);
         isUserIdValid = false;
@@ -461,36 +518,52 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    if (currentUserType === "buyer") {
-      alert("구매자 회원가입이 완료되었습니다!");
-      window.location.href = "./index.html";
-      return;
-    }
-
     const phoneNumber =
       phonePrefixSelect.value + phoneMiddleInput.value + phoneLastInput.value;
-    const userData = {
-      username: userIdInput.value.trim(),
-      password: passwordInput.value,
-      name: userNameInput.value.trim(),
-      phone_number: phoneNumber,
-      company_registration_number: businessNumberInput.value.trim(),
-      store_name: storeNameInput.value.trim(),
-    };
 
     submitBtn.textContent = "가입 중...";
     submitBtn.disabled = true;
 
     try {
-      const result = await apiUtils.submitSellerSignup(userData);
-      if (result.success) {
-        alert("판매자 회원가입이 완료되었습니다!");
-        window.location.href = "./index.html";
-      } else {
-        if (result.errors) {
-          handleApiErrors(result.errors);
+      if (currentUserType === "buyer") {
+        const userData = {
+          username: userIdInput.value.trim(),
+          password: passwordInput.value,
+          name: userNameInput.value.trim(),
+          phone_number: phoneNumber,
+        };
+
+        const result = await apiUtils.submitBuyerSignup(userData);
+        if (result.success) {
+          alert("구매자 회원가입이 완료되었습니다!");
+          window.location.href = "./index.html";
         } else {
-          alert(result.error || "회원가입 중 오류가 발생했습니다.");
+          if (result.errors) {
+            handleApiErrors(result.errors);
+          } else {
+            alert(result.error || "회원가입 중 오류가 발생했습니다.");
+          }
+        }
+      } else {
+        const userData = {
+          username: userIdInput.value.trim(),
+          password: passwordInput.value,
+          name: userNameInput.value.trim(),
+          phone_number: phoneNumber,
+          company_registration_number: businessNumberInput.value.trim(),
+          store_name: storeNameInput.value.trim(),
+        };
+
+        const result = await apiUtils.submitSellerSignup(userData);
+        if (result.success) {
+          alert("판매자 회원가입이 완료되었습니다!");
+          window.location.href = "./index.html";
+        } else {
+          if (result.errors) {
+            handleApiErrors(result.errors);
+          } else {
+            alert(result.error || "회원가입 중 오류가 발생했습니다.");
+          }
         }
       }
     } finally {

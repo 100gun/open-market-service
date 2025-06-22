@@ -6,5 +6,6 @@ export const API_ENDPOINTS = {
   PRODUCT_DETAIL:
     "https://api.wenivops.co.kr/services/open-market/products/<int:product_id>/",
   SELLER_SIGNUP: `${API_BASE_URL}/accounts/seller/signup/`,
+  BUYER_SIGNUP: `${API_BASE_URL}/accounts/buyer/signup/`,
   VALIDATE_BUSINESS_NUMBER: `${API_BASE_URL}/accounts/seller/validate-registration-number/`,
 };
