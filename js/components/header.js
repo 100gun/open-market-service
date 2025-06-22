@@ -1,5 +1,8 @@
 import { icons } from "../icon-library.js";
 
+let isHeaderUpdating = false;
+let globalClickListener = null; // 전역 클릭 리스너 관리
+
 // 📌 로그인 확인
 function isLoggedIn() {
   try {
@@ -26,15 +29,22 @@ function getUserInfo() {
 function initializeHeaderEvents() {
   console.log("=== 헤더 이벤트 초기화 시작 ===");
 
+  // 기존 전역 클릭 리스너 제거
+  if (globalClickListener) {
+    document.removeEventListener("click", globalClickListener);
+    globalClickListener = null;
+  }
+
   const mypageButton = document.querySelector("#mypageButton");
   const userDropdown = document.querySelector("#userDropdown");
-  const menuItem = mypageButton?.closest(".menu-item"); // 부모 menu-item 요소 찾기
+  const menuItem = mypageButton?.closest(".menu-item");
 
   console.log("마이페이지 버튼:", mypageButton);
   console.log("드롭다운 메뉴:", userDropdown);
   console.log("메뉴 아이템:", menuItem);
 
   if (mypageButton && userDropdown && menuItem) {
+    // 마이페이지 버튼 클릭 이벤트
     mypageButton.addEventListener("click", function (e) {
       console.log("🎯 마이페이지 버튼 클릭됨!");
       e.preventDefault();
@@ -42,6 +52,19 @@ function initializeHeaderEvents() {
 
       const isActive = menuItem.classList.contains("active");
 
+      // 모든 드롭다운 닫기
+      document.querySelectorAll(".menu-item.active").forEach((item) => {
+        if (item !== menuItem) {
+          item.classList.remove("active");
+        }
+      });
+      document.querySelectorAll(".dropdown-menu.show").forEach((dropdown) => {
+        if (dropdown !== userDropdown) {
+          dropdown.classList.remove("show");
+        }
+      });
+
+      // 현재 드롭다운 토글
       if (isActive) {
         menuItem.classList.remove("active");
         userDropdown.classList.remove("show");
@@ -53,17 +76,44 @@ function initializeHeaderEvents() {
       }
     });
 
-    document.addEventListener("click", function (e) {
-      if (!menuItem.contains(e.target) && !userDropdown.contains(e.target)) {
+    // 전역 클릭 리스너 (드롭다운 외부 클릭 시 닫기)
+    globalClickListener = function (e) {
+      if (!menuItem.contains(e.target)) {
         menuItem.classList.remove("active");
         userDropdown.classList.remove("show");
         mypageButton.setAttribute("aria-expanded", "false");
       }
-    });
+    };
 
+    document.addEventListener("click", globalClickListener);
+
+    // 드롭다운 내부 클릭 시 이벤트 버블링 방지
     userDropdown.addEventListener("click", function (e) {
       e.stopPropagation();
     });
+
+    // 로그아웃 버튼 이벤트
+    const logoutBtn = userDropdown.querySelector(".logout-btn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleLogout();
+      });
+    }
+
+    // 마이페이지 버튼 이벤트
+    const mypageBtn = userDropdown.querySelector(
+      ".dropdown-item:not(.logout-btn)"
+    );
+    if (mypageBtn) {
+      mypageBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // 마이페이지로 이동
+        window.location.href = "./mypage.html";
+      });
+    }
   }
 }
 
@@ -74,11 +124,13 @@ function handleLogout() {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("userInfo");
 
+    // 헤더 업데이트
     updateHeader();
 
+    // 페이지 이동 처리
     if (
       window.location.pathname === "/" ||
-      window.location.pathname.includes("./index.html")
+      window.location.pathname.includes("index.html")
     ) {
       window.location.reload();
     } else {
@@ -89,19 +141,39 @@ function handleLogout() {
 
 // 📌 헤더 업데이트
 function updateHeader() {
-  const headerElement = document.getElementById("header");
-
-  if (!headerElement) {
+  if (isHeaderUpdating) {
+    console.log("헤더 업데이트 중복 실행 방지");
     return;
   }
 
+  isHeaderUpdating = true;
+
+  const headerElement = document.getElementById("header");
+
+  if (!headerElement) {
+    console.warn("헤더 요소를 찾을 수 없습니다.");
+    isHeaderUpdating = false;
+    return;
+  }
+
+  // 기존 전역 리스너 정리
+  if (globalClickListener) {
+    document.removeEventListener("click", globalClickListener);
+    globalClickListener = null;
+  }
+
+  // 기존 헤더 내용 제거
   headerElement.innerHTML = "";
 
+  // 새 헤더 생성
   const newHeader = createHeader();
   headerElement.appendChild(newHeader);
 
-  const WAIT_TIME = 100; // 브라우저 > 새 요소 준비할 시간
-  setTimeout(initializeHeaderEvents, WAIT_TIME);
+  // 이벤트 초기화를 위한 딜레이
+  setTimeout(() => {
+    initializeHeaderEvents();
+    isHeaderUpdating = false;
+  }, 150);
 }
 
 // 📌 로그인 상태에 따른 메뉴 변화
@@ -109,12 +181,16 @@ function createUserButton() {
   const isUserLoggedIn = isLoggedIn();
 
   if (isUserLoggedIn) {
+    const userInfo = getUserInfo();
+    const userName = userInfo ? userInfo.name : "사용자";
+
     const menuItem = document.createElement("div");
     menuItem.className = "menu-item user-menu-dropdown";
 
     const button = document.createElement("button");
     button.className = "user-menu-button";
     button.setAttribute("aria-label", "마이페이지 메뉴 열기");
+    button.setAttribute("aria-expanded", "false");
     button.id = "mypageButton";
 
     const defaultIcon = document.createElement("span");
@@ -136,6 +212,14 @@ function createUserButton() {
     dropdownMenu.className = "dropdown-menu";
     dropdownMenu.id = "userDropdown";
 
+    // 사용자 인사말 추가
+    const userGreeting = document.createElement("div");
+    userGreeting.className = "user-greeting";
+    userGreeting.textContent = `${userName}님`;
+    userGreeting.style.padding = "8px 16px";
+    userGreeting.style.borderBottom = "1px solid #eee";
+    userGreeting.style.fontWeight = "bold";
+
     const mypageItem = document.createElement("button");
     mypageItem.className = "dropdown-item";
     mypageItem.textContent = "마이페이지";
@@ -143,8 +227,8 @@ function createUserButton() {
     const logoutItem = document.createElement("button");
     logoutItem.className = "dropdown-item logout-btn";
     logoutItem.textContent = "로그아웃";
-    logoutItem.addEventListener("click", handleLogout);
 
+    dropdownMenu.appendChild(userGreeting);
     dropdownMenu.appendChild(mypageItem);
     dropdownMenu.appendChild(logoutItem);
 
@@ -207,10 +291,8 @@ function createSearchSection() {
   searchIcon.alt = "";
 
   searchButton.appendChild(searchIcon);
-
   searchForm.appendChild(searchInput);
   searchForm.appendChild(searchButton);
-
   searchSection.appendChild(searchForm);
 
   return searchSection;
@@ -223,7 +305,7 @@ function createUserMenu() {
   userMenu.setAttribute("aria-label", "사용자 메뉴");
 
   const cartLink = document.createElement("a");
-  cartLink.href = "#";
+  cartLink.href = "./cart.html"; // 장바구니 페이지 링크 수정
   cartLink.className = "menu-item";
   cartLink.setAttribute("aria-label", "장바구니 페이지로 이동");
 
@@ -250,7 +332,7 @@ function createUserMenu() {
 }
 
 // 📌 전체 헤더 만들기
-export function createHeader() {
+function createHeader() {
   const header = document.createElement("header");
   header.className = "header";
   header.setAttribute("role", "banner");
@@ -264,7 +346,7 @@ export function createHeader() {
   const logoHeading = document.createElement("h1");
 
   const logoLink = document.createElement("a");
-  logoLink.href = "/";
+  logoLink.href = "./index.html"; // 로고 링크 수정
   logoLink.className = "logo";
   logoLink.setAttribute("aria-label", "HODU 홈페이지로 이동");
 
@@ -288,25 +370,31 @@ export function createHeader() {
 
   header.appendChild(headerContainer);
 
-  // 브라우저 > 새 요소 준비할 시간
-  setTimeout(() => {
-    initializeHeaderEvents();
-  }, 100);
-
   return header;
 }
 
+// 전역 함수로 노출
 window.handleLogout = handleLogout;
 window.updateHeader = updateHeader;
 window.initializeHeaderEvents = initializeHeaderEvents;
 
-// 📌 헤더 업데이트
+// 📌 초기 헤더 로드 (중복 실행 방지)
+let headerInitialized = false;
+
 document.addEventListener("DOMContentLoaded", function () {
-  updateHeader();
+  if (!headerInitialized) {
+    headerInitialized = true;
+    setTimeout(() => {
+      updateHeader();
+    }, 50);
+  }
 });
 
-window.addEventListener("pageshow", function () {
-  updateHeader();
+// 페이지 표시 시 헤더 업데이트 (뒤로가기 등)
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted && !isHeaderUpdating) {
+    updateHeader();
+  }
 });
 
-export { updateHeader };
+export { updateHeader, createHeader };
