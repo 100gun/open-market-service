@@ -1,4 +1,7 @@
-# 🛒 HODU 오픈마켓
+# 📌 HODU 랜딩페이지
+오름캠프 FE 4기 2차 미니 프로젝트 - HODU 오픈마켓 입니다.
+> https://100gun.github.io/open-market-service/
+
 ## 🏠 메인 페이지 (index.html + index.js) <br>
 - API를 통한 전체 상품 목록 호출
 - 로그인 여부에 따라 헤더 메뉴가 자동으로 업데이트<br>
