@@ -527,7 +527,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fieldsToCheck.forEach((field) => {
       // 필드가 터치되었고 비어있는 경우에만 에러 표시
       if (isFieldTouched(field.element) && !field.element.value.trim()) {
-        showError(field.element, `${field.name}을(를) 입력해주세요.`);
+        showError(field.element, `필수 정보입니다.`);
         isValid = false;
       }
       // 필드가 비어있으면 (터치 여부 관계없이) 폼은 유효하지 않음
