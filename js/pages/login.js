@@ -159,7 +159,7 @@ function handleLoginSuccess(data) {
   if (document.referrer && document.referrer !== window.location.href) {
     window.history.back();
   } else {
-    window.location.href = "./product.html";
+    window.location.href = "./index.html";
   }
 }
 
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `${userInfo.name}님으로 이미 로그인되어 있습니다. 메인 페이지로 이동하시겠습니까?`
       )
     ) {
-      window.location.href = "./product.html";
+      window.location.href = "./index.html";
     }
   }
 });
