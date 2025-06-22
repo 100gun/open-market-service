@@ -156,6 +156,8 @@ function handleLoginSuccess(data) {
 
   alert(`${user.name}님, 로그인 성공!`);
 
+  updateHeader();
+
   if (document.referrer && document.referrer !== window.location.href) {
     window.history.back();
   } else {
