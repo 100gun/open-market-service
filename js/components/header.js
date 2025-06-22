@@ -46,7 +46,6 @@ function initializeHeaderEvents() {
   if (mypageButton && userDropdown && menuItem) {
     // 마이페이지 버튼 클릭 이벤트
     mypageButton.addEventListener("click", function (e) {
-      console.log("🎯 마이페이지 버튼 클릭됨!");
       e.preventDefault();
       e.stopPropagation();
 
@@ -142,7 +141,6 @@ function handleLogout() {
 // 📌 헤더 업데이트
 function updateHeader() {
   if (isHeaderUpdating) {
-    console.log("헤더 업데이트 중복 실행 방지");
     return;
   }
 
@@ -151,8 +149,6 @@ function updateHeader() {
   const headerElement = document.getElementById("header");
 
   if (!headerElement) {
-    console.warn("헤더 요소를 찾을 수 없습니다.");
-    isHeaderUpdating = false;
     return;
   }
 
@@ -305,7 +301,7 @@ function createUserMenu() {
   userMenu.setAttribute("aria-label", "사용자 메뉴");
 
   const cartLink = document.createElement("a");
-  cartLink.href = "./cart.html"; // 장바구니 페이지 링크 수정
+  cartLink.href = "./cart.html";
   cartLink.className = "menu-item";
   cartLink.setAttribute("aria-label", "장바구니 페이지로 이동");
 
@@ -346,7 +342,7 @@ function createHeader() {
   const logoHeading = document.createElement("h1");
 
   const logoLink = document.createElement("a");
-  logoLink.href = "./index.html"; // 로고 링크 수정
+  logoLink.href = "./index.html";
   logoLink.className = "logo";
   logoLink.setAttribute("aria-label", "HODU 홈페이지로 이동");
 
