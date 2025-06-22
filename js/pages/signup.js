@@ -427,7 +427,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (currentUserType === "buyer") {
       alert("구매자 회원가입이 완료되었습니다!");
-      window.location.href = "./product.html";
+      window.location.href = "./index.html";
       return;
     }
 
