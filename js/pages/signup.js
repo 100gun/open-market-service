@@ -50,45 +50,58 @@ const apiUtils = {
     }
   },
 
-  // 아이디 중복확인 수정
+  // 아이디 중복확인 - 더 안전한 버전
   async checkUserIdDuplicate(userId) {
     try {
-      const randomSuffix = Date.now().toString().slice(-6);
+      // 현재 시각과 랜덤값을 조합해서 고유값 생성
+      const now = new Date();
+      const uniqueSuffix =
+        now.getTime().toString() + Math.random().toString(36).substr(2, 5);
+
+      const testData = {
+        username: userId,
+        password: "testpass123a",
+        name: "test" + uniqueSuffix,
+        phone_number: "010" + uniqueSuffix.slice(-8).padStart(8, "0"),
+        company_registration_number: uniqueSuffix
+          .slice(0, 10)
+          .padStart(10, "1"),
+        store_name: "teststore" + uniqueSuffix,
+      };
+
+      console.log("중복확인 테스트 데이터:", testData); // 디버깅용
 
       const { response, data } = await this.request(
         API_ENDPOINTS.SELLER_SIGNUP,
         {
           method: "POST",
-          body: JSON.stringify({
-            username: userId,
-            password: "testpass123a", // 8자 이상 + 영소문자 + 숫자
-            name: "testuser",
-            phone_number: "010" + randomSuffix + "00", // 11자리
-            company_registration_number: "1" + randomSuffix + "000", // 10자리
-            store_name: "teststore" + randomSuffix,
-          }),
+          body: JSON.stringify(testData),
         }
       );
 
-      if (response.status === 400 && data.username) {
-        if (Array.isArray(data.username)) {
-          const usernameError = data.username[0];
-          if (usernameError.includes("이미 존재합니다")) {
-            return {
-              isDuplicate: true,
-              message: "이미 사용중인 아이디입니다.",
-            };
-          } else {
-            return {
-              isDuplicate: false,
-              isValid: false,
-              message: usernameError,
-            };
-          }
+      console.log("중복확인 응답:", response.status, data);
+
+      // username 필드에 에러가 있는지 확인
+      if (data.username && Array.isArray(data.username)) {
+        const usernameError = data.username[0];
+        if (
+          usernameError.includes("이미 존재") ||
+          usernameError.includes("already exists")
+        ) {
+          return {
+            isDuplicate: true,
+            message: "이미 사용중인 아이디입니다.",
+          };
+        } else {
+          return {
+            isDuplicate: false,
+            isValid: false,
+            message: usernameError,
+          };
         }
       }
 
-      // 다른 에러가 있어도 username 관련이 아니면 사용 가능으로 간주
+      // username 관련 에러가 없으면 사용 가능
       return { isDuplicate: false, isValid: true };
     } catch (error) {
       console.error("아이디 중복확인 에러:", error);
